@@ -48,7 +48,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(hydra evil-collection evil general doom-themes helpful ivy-rich which-key rainbow-delimiters elcord spacemacs-theme doom-modeline counsel use-package ivy command-log-mode)))
+   '(dashboard forge evil-magit hydra evil-collection evil general doom-themes helpful ivy-rich which-key rainbow-delimiters elcord spacemacs-theme doom-modeline counsel use-package ivy command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -169,10 +169,49 @@
   :config (counsel-projectile-mode))
 
 ;; Magit configuration
-
 (use-package magit
   :commands (magit-status magit-get-current-branch)
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 (use-package forge)
+
+(use-package org)
+
+;; Dashboard
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+
+(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+
+;; Configuration dashboard
+(setq dashboard-banner-logo-title "Welcome to Emacs")
+;; Set the banner
+(setq dashboard-startup-banner 'logo)
+
+;; content is not centered by default. To center, set
+(setq dashboard-center-content t)
+
+
+(setq dashboard-show-shortcuts nil)
+
+(setq dashboard-items '((recents  . 5)
+                        (bookmarks . 5)
+                        (projects . 5)
+                        (agenda . 5)
+                        (registers . 5)))
+
+(defun dashboard-insert-custom (list-size)
+  (insert "Custom text"))
+(add-to-list 'dashboard-item-generators  '(custom . dashboard-insert-custom))
+(add-to-list 'dashboard-items '(custom) t)
+
+(setq dashboard-item-names '(("Recent Files:" . "Recently opened files:")
+                             ("Agenda for today:" . "Today's agenda:")
+                             ("Agenda for the coming week:" . "Agenda:")))
+
+(setq dashboard-set-heading-icons t)
+(setq dashboard-set-file-icons t)
+
