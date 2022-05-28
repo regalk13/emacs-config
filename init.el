@@ -19,12 +19,14 @@
   :config
   (setq doom-themes-enable-bold t
 	doom-theemes-enable-italic t)
-  (load-theme 'doom-tokyo-night t)
+  (load-theme 'doom-tomorrow-night t)
   (doom-themes-neotree-config)
   (setq doom-themes-treemacs-theme "doom-atom")
   (doom-themes-treemacs-config)
   (doom-themes-org-config))
 
+
+;;(load-theme 'atom-one-dark t)
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -48,7 +50,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(dashboard forge evil-magit hydra evil-collection evil general doom-themes helpful ivy-rich which-key rainbow-delimiters elcord spacemacs-theme doom-modeline counsel use-package ivy command-log-mode)))
+   '(atom-one-dark-theme dashboard forge evil-magit hydra evil-collection evil general doom-themes helpful ivy-rich which-key rainbow-delimiters elcord spacemacs-theme doom-modeline counsel use-package ivy command-log-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -215,3 +217,41 @@
 (setq dashboard-set-heading-icons t)
 (setq dashboard-set-file-icons t)
 
+(use-package vterm
+  :load-path "~/emacs-libvterm/")
+
+
+;; Super Hiper configuration to program in C using helm :0
+
+;; Turn on electric pair mode
+(electric-pair-mode 1)
+
+(setq package-selected-packages '(lsp-mode yasnippet lsp-treemacs helm-lsp
+    projectile hydra flycheck company avy which-key helm-xref dap-mode))
+
+(when (cl-find-if-not #'package-installed-p package-selected-packages)
+  (package-refresh-contents)
+  (mapc #'package-install package-selected-packages))
+
+;; sample `helm' configuration use https://github.com/emacs-helm/helm/ for details
+(helm-mode)
+(require 'helm-xref)
+(define-key global-map [remap find-file] #'helm-find-files)
+(define-key global-map [remap execute-extended-command] #'helm-M-x)
+(define-key global-map [remap switch-to-buffer] #'helm-mini)
+
+(which-key-mode)
+(add-hook 'c-mode-hook 'lsp)
+(add-hook 'c++-mode-hook 'lsp)
+
+(setq gc-cons-threshold (* 100 1024 1024)
+      read-process-output-max (* 1024 1024)
+      treemacs-space-between-root-nodes nil
+      company-idle-delay 0.0
+      company-minimum-prefix-length 1
+      lsp-idle-delay 0.1)  ;; clangd is fast
+
+(with-eval-after-load 'lsp-mode
+  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+  (require 'dap-cpptools)
+  (yas-global-mode))
